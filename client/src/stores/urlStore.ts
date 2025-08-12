@@ -1,78 +1,63 @@
 import { defineStore } from "pinia";
-import api from "@/utils/api";
-import type { Url, CreateUrlPayload, AnalyticsData } from "@/types/url";
+import api from "../plugins/axios";
+import type { Analytics, UrlInfo, UrlResponse } from "../types";
 
 export const useUrlStore = defineStore("url", {
   state: () => ({
-    urls: [] as Url[],
-    currentUrl: null as Url | null,
-    analytics: null as AnalyticsData | null,
-    loading: false,
-    error: null as string | null,
+    shortUrl: "" as string,
+    info: null as UrlInfo | null,
+    analytics: null as Analytics | null,
+    loading: false as boolean,
+    error: "" as string,
   }),
   actions: {
-    async createUrl(payload: CreateUrlPayload) {
+    async createUrl(originalUrl: string, alias?: string, expiresAt?: string) {
       this.loading = true;
-      this.error = null;
+      this.error = "";
       try {
-        const response = await api.post("/shorten", payload);
-        const newUrl = response.data;
-        this.urls.push(newUrl);
-        return newUrl;
+        const res = await api.post<UrlResponse>("/shorten", {
+          originalUrl,
+          alias,
+          expiresAt,
+        });
+        this.shortUrl = res.data.shortUrl;
       } catch (err: any) {
-        this.error =
-          err.response?.data?.error ||
-          err.message ||
-          "Failed to create short URL";
-        throw err;
+        this.error = err.response?.data?.error || err.message;
       } finally {
         this.loading = false;
       }
     },
-
-    async fetchUrlInfo(shortUrl: string) {
+    async fetchInfo(shortUrl: string) {
       this.loading = true;
-      this.currentUrl = null;
-      this.error = null;
       try {
-        const response = await api.get(`/api/info/${shortUrl}`);
-        this.currentUrl = response.data;
+        const res = await api.get<UrlInfo>(`/info/${shortUrl}`);
+        this.info = res.data;
       } catch (err: any) {
-        this.error = err.message || "Failed to fetch URL info";
-        throw err;
+        this.error = err.response?.data?.error || err.message;
       } finally {
         this.loading = false;
       }
     },
-
     async fetchAnalytics(shortUrl: string) {
       this.loading = true;
-      this.analytics = null;
-      this.error = null;
       try {
-        const response = await api.get(`/api/analytics/${shortUrl}`);
-        this.analytics = response.data;
+        const res = await api.get<Analytics>(`/analytics/${shortUrl}`);
+        this.analytics = res.data;
       } catch (err: any) {
-        this.error = err.message || "Failed to fetch analytics";
-        throw err;
+        this.error = err.response?.data?.error || err.message;
       } finally {
         this.loading = false;
       }
     },
-
     async deleteUrl(shortUrl: string) {
       this.loading = true;
-      this.error = null;
       try {
-        await api.delete(`/api/delete/${shortUrl}`);
-        this.urls = this.urls.filter((url) => url.shortUrl !== shortUrl);
-        if (this.currentUrl?.shortUrl === shortUrl) {
-          this.currentUrl = null;
-        }
-        return true;
+        await api.delete(`/delete/${shortUrl}`);
+        this.info = null;
+        this.analytics = null;
+        this.shortUrl = "";
       } catch (err: any) {
-        this.error = err.message || "Failed to delete URL";
-        throw err;
+        this.error = err.response?.data?.error || err.message;
       } finally {
         this.loading = false;
       }

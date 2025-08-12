@@ -1,73 +1,30 @@
-<script setup lang="ts">
-import { RouterView } from "vue-router";
-</script>
-
 <template>
-  <div class="app">
-    <header>
-      <h1>URL Shortener</h1>
-      <nav>
-        <router-link to="/">Home</router-link>
-      </nav>
-    </header>
-
-    <main>
-      <RouterView />
-    </main>
-
-    <footer>
-      <p>© {{ new Date().getFullYear() }} URL Shortener</p>
-    </footer>
+  <div id="app">
+    <nav>
+      <router-link to="/">Home</router-link>
+      <router-link to="/info/{{ lastShortUrl }}">Info</router-link>
+      <router-link to="/analytics/{{ lastShortUrl }}">Analytics</router-link>
+    </nav>
+    <router-view />
   </div>
 </template>
 
+<script lang="ts">
+import { defineComponent } from "vue";
+import { useUrlStore } from "./stores/urlStore";
+
+export default defineComponent({
+  setup() {
+    const store = useUrlStore();
+    return { lastShortUrl: store.shortUrl };
+  },
+});
+</script>
+
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #f5f5f5;
-}
-
-.app {
+nav {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-header {
-  background-color: #2c3e50;
-  color: white;
-  padding: 1rem;
-  text-align: center;
-}
-
-header h1 {
-  margin-bottom: 0.5rem;
-}
-
-nav a {
-  color: white;
-  text-decoration: none;
-  margin: 0 10px;
-}
-
-main {
-  flex: 1;
-  padding: 2rem;
-}
-
-footer {
-  background-color: #2c3e50;
-  color: white;
-  text-align: center;
-  padding: 1rem;
-  margin-top: auto;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 </style>

@@ -1,16 +1,21 @@
 import express from 'express';
-import { shortenUrl, redirectUrl, getUrlInfo, deleteUrl, getAnalytics } from '../controllers/urlController';
+import {
+  shortenUrl,
+  redirectUrl,
+  getUrlInfo,
+  deleteUrl,
+  getAnalytics,
+} from '../controllers/urlController';
+import { asyncHandler } from '../middlewares/asyncHandler';
+import { validateBody } from '../middlewares/validateBody';
+import { shortenSchema } from '../schemas/urlSchemas';
 
 const router = express.Router();
 
-router.post('/shorten', shortenUrl);
-
-router.get('/:shortUrl', redirectUrl);
-
-router.get('/info/:shortUrl', getUrlInfo);
-
-router.delete('/delete/:shortUrl', deleteUrl);
-
-router.get('/analytics/:shortUrl', getAnalytics);
+router.post('/shorten', validateBody(shortenSchema), asyncHandler(shortenUrl));
+router.get('/info/:shortUrl', asyncHandler(getUrlInfo));
+router.delete('/delete/:shortUrl', asyncHandler(deleteUrl));
+router.get('/analytics/:shortUrl', asyncHandler(getAnalytics));
+router.get('/:shortUrl', asyncHandler(redirectUrl));
 
 export default router;

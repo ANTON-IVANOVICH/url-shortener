@@ -1,18 +1,21 @@
-<script setup lang="ts">
-import UrlForm from "@/components/UrlForm.vue";
-</script>
-
 <template>
-  <div class="home">
-    <h1>URL Shortener</h1>
+  <div>
     <UrlForm />
+    <UrlInfo v-if="store.info" />
   </div>
 </template>
 
-<style scoped>
-.home {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-</style>
+<script lang="ts">
+import { defineComponent } from "vue";
+import UrlForm from "../components/UrlForm.vue";
+import UrlInfo from "../components/UrlInfo.vue";
+import { useUrlStore } from "../stores/urlStore";
+
+export default defineComponent({
+  components: { UrlForm, UrlInfo },
+  setup() {
+    const store = useUrlStore();
+    return { store };
+  },
+});
+</script>

@@ -7,8 +7,19 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  refreshToken String? 
+  urls      Url[]    @relation("UserUrls")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Url {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   originalUrl  String   @db.VarChar(2048)
   shortUrl     String   @unique @db.VarChar(20)
   alias        String?  @unique @db.VarChar(20)
@@ -17,11 +28,14 @@ model Url {
   clickCount   Int      @default(0)
   
   clicks       Click[] 
+
+  owner     User   @relation("UserUrls", fields: [ownerId], references: [id])
+  ownerId   String
 }
 
 model Click {
-  id        String   @id @default(uuid())
-  url       Url      @relation(fields: [urlId], references: [id])
+  id        Int   @id @default(autoincrement())
+  url       Url      @relation(fields: [urlId], references: [id], onDelete: Cascade)
   urlId     String
   ipAddress String   @db.VarChar(45)
   clickedAt DateTime @default(now())

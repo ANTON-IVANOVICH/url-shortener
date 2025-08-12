@@ -1,29 +1,46 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "@/views/HomeView.vue";
-import UrlInfoView from "@/views/UrlInfoView.vue";
-import RedirectView from "@/views/RedirectView.vue";
+import HomeView from "../views/HomeView.vue";
+import InfoView from "../views/InfoView.vue";
+import AnalyticsView from "../views/AnalyticsView.vue";
+import { useAuthStore } from "../stores/authStore";
+import LoginView from "../views/LoginView.vue";
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: "/",
-      name: "home",
-      component: HomeView,
-    },
-    {
-      path: "/info/:shortUrl",
-      name: "url-info",
-      component: UrlInfoView,
-      props: true,
-    },
-    {
-      path: "/:shortUrl",
-      name: "redirect",
-      component: RedirectView,
-      props: true,
-    },
-  ],
+const routes = [
+  {
+    path: "/",
+    name: "home",
+    component: HomeView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/info/:shortUrl",
+    name: "info",
+    component: InfoView,
+    props: true,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/analytics/:shortUrl",
+    name: "analytics",
+    component: AnalyticsView,
+    props: true,
+    meta: { requiresAuth: true },
+  },
+  { path: "/login", name: "login", component: LoginView },
+];
+
+export const router = createRouter({
+  history: createWebHistory(),
+  routes,
 });
 
-export default router;
+router.beforeEach((to, _, next) => {
+  const { state } = useAuthStore();
+  if (to.meta.requiresAuth && !state.authenticated) {
+    return next({ path: "/login", query: { redirect: to.fullPath } });
+  }
+  next();
+});
+
+// const InfoView = () => import('@/views/InfoView.vue');
+// const AnalyticsView = () => import('@/views/AnalyticsView.vue');

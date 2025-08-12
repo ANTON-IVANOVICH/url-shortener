@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { ApiError } from '../errors/ApiError';
 
 export const generateShortCode = (length = 6): string => {
   return crypto.randomBytes(length).toString('hex').slice(0, length);
@@ -13,6 +14,9 @@ export const isValidUrl = (url: string): boolean => {
   }
 };
 
-export const isUrlExpired = (expiresAt: Date | null): boolean => {
-  return expiresAt ? new Date() > new Date(expiresAt) : false;
-};
+export function validateExpiration(expiresAt?: string) {
+  if (!expiresAt) return;
+  const date = new Date(expiresAt);
+  if (isNaN(date.getTime())) throw new ApiError(400, 'Invalid expiration date format');
+  if (new Date() > date) throw new ApiError(400, 'Expiration date must be in the future');
+}
