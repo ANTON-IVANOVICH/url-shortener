@@ -1,5 +1,5 @@
-import createApp from '@/app';
-import prisma from '@/db';
+import createApp from './app';
+import prisma from './db';
 
 const PORT = process.env.PORT;
 const app = createApp();

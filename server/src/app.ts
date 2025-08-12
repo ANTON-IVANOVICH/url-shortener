@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { config } from 'dotenv';
-import urlRoutes from '@/routes/urlRoutes';
+import urlRoutes from './routes/urlRoutes';
 import requestIp from 'request-ip';
 
 config();

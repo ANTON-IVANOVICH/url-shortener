@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { generateShortCode, isUrlExpired } from '@/utils/helpers';
-import prisma from '@/db';
+import { generateShortCode, isUrlExpired } from '../utils/helpers';
+import prisma from '../db';
 
 export const shortenUrl = async (req: Request, res: Response) => {
   const { originalUrl, alias, expiresAt } = req.body;
