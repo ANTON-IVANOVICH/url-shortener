@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div class="h-full">
     <nav>
       <router-link to="/">Home</router-link>
       <router-link to="/info/{{ lastShortUrl }}">Info</router-link>

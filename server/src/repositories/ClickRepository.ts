@@ -1,7 +1,8 @@
 import prisma from '../db';
 import { Click } from '@prisma/client';
+import { IClickRepository } from './interfaces/IClick';
 
-export class ClickRepository {
+export class ClickRepository implements IClickRepository {
   record(urlId: string, ipAddress: string): Promise<Click> {
     return prisma.click.create({ data: { urlId, ipAddress } });
   }

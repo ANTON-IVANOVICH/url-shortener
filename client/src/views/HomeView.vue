@@ -1,7 +1,7 @@
 <template>
   <div>
     <UrlForm />
-    <UrlInfo v-if="store.info" />
+    <UrlInfo :info="store.info" v-if="store.info" />
   </div>
 </template>
 

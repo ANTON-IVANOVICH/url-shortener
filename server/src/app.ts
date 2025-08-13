@@ -6,6 +6,8 @@ import authRoutes from './routes/authRoutes';
 import { errorHandler } from './middlewares/errorHandler';
 import cookieParser from 'cookie-parser';
 import { requireAuth } from './middlewares/authMiddleware';
+import { asyncHandler } from './middlewares/asyncHandler';
+import { redirectUrl } from './controllers/urlController';
 
 const createApp = () => {
   const app = express();
@@ -14,8 +16,8 @@ const createApp = () => {
   app.use(cookieParser());
   app.use(
     cors({
-      origin: 'http://localhost:5173',
-      methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+      origin: process.env.FRONTEND_URL,
+      methods: ['GET', 'POST', 'DELETE', 'OPTIONS', 'PUT', 'PATCH'],
       credentials: true,
     }),
   );
@@ -25,6 +27,8 @@ const createApp = () => {
   app.get('/health', (_req: Request, res: Response) => {
     res.status(200).json({ status: 'ok' });
   });
+
+  app.get('/:shortUrl', asyncHandler(redirectUrl));
 
   app.use('/api/auth', authRoutes);
 

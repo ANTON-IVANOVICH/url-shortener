@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Информация о ссылке {{ shortUrl }}</h2>
-    <UrlInfo :info="store.info" />
+    <UrlInfo v-if="store.info" :info="store.info" />
   </div>
 </template>
 

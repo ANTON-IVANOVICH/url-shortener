@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "../stores/authStore";
 import HomeView from "../views/HomeView.vue";
 import InfoView from "../views/InfoView.vue";
 import AnalyticsView from "../views/AnalyticsView.vue";
-import { useAuthStore } from "../stores/authStore";
 import LoginView from "../views/LoginView.vue";
 
 const routes = [
@@ -34,9 +34,12 @@ export const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _, next) => {
-  const { state } = useAuthStore();
-  if (to.meta.requiresAuth && !state.authenticated) {
+router.beforeEach(async (to, _, next) => {
+  const auth = useAuthStore();
+  if (!auth.state.authenticated) {
+    await auth.init();
+  }
+  if (to.meta.requiresAuth && !auth.state.authenticated) {
     return next({ path: "/login", query: { redirect: to.fullPath } });
   }
   next();

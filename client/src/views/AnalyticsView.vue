@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Статистика для {{ shortUrl }}</h2>
-    <Analytics :data="store.analytics" />
+    <Analytics :data="store.analytics ?? { totalClicks: 0, lastClicks: [] }" />
   </div>
 </template>
 

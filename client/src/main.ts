@@ -5,7 +5,8 @@ import { createPinia } from "pinia";
 import { router } from "./router";
 import PrimeVue from "primevue/config";
 import Aura from "@primeuix/themes/aura";
-import { ToastService } from "primevue";
+import ToastService from "primevue/toastservice";
+import { useAuthStore } from "./stores/authStore";
 
 const app = createApp(App);
 
@@ -17,5 +18,8 @@ app.use(PrimeVue, {
   },
 });
 app.use(ToastService);
+
+const auth = useAuthStore();
+await auth.init();
 
 app.mount("#app");

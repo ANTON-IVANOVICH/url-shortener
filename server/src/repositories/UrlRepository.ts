@@ -1,7 +1,8 @@
 import prisma from '../db';
 import { Url, Click } from '@prisma/client';
+import { IUrlRepository } from './interfaces/IUrl';
 
-export class UrlRepository {
+export class UrlRepository implements IUrlRepository {
   create(data: {
     originalUrl: string;
     shortUrl: string;
